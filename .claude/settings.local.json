@@ -1,0 +1,23 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(cd /c/Users/Sabaoon/Documents/code/kolda-tech && npx create-next-app@latest . --typescript --tailwind --eslint --app --src-dir=false --import-alias=\"@/*\" --use-npm 2>&1)",
+      "Bash(cd /c/Users/Sabaoon/Documents/code && echo \"N\" | npx create-next-app@latest kolda-tech-temp --typescript --tailwind --eslint --app --src-dir=false --import-alias=\"@/*\" --use-npm 2>&1)",
+      "Bash(cd /c/Users/Sabaoon/Documents/code && printf 'N\\\\nN\\\\n' | npx create-next-app@latest kolda-tech-temp --typescript --tailwind --eslint --app --import-alias=\"@/*\" --use-npm 2>&1)",
+      "Bash(cd /c/Users/Sabaoon/Documents/code && printf 'n\\\\nn\\\\n' | npx create-next-app@latest kolda-tech-temp --ts --tailwind --eslint --app --import-alias=\"@/*\" --use-npm 2>&1)",
+      "Bash(cd /c/Users/Sabaoon/Documents/code && yes \"\" | npx create-next-app@latest kolda-tech-temp --ts --tailwind --eslint --app --import-alias=\"@/*\" --use-npm 2>&1)",
+      "Bash(rm:*)",
+      "Bash(cd /c/Users/Sabaoon/Documents/code/kolda-tech && npx shadcn@latest init -d 2>&1)",
+      "Bash(cd /c/Users/Sabaoon/Documents/code/kolda-tech && rm -f package-lock.json && npm install 2>&1)",
+      "Bash(npm cache clean --force 2>&1 && cd /c/Users/Sabaoon/Documents/code/kolda-tech && npx shadcn@latest init -d 2>&1)",
+      "Bash(cd /c/Users/Sabaoon/Documents/code/kolda-tech && npm install -D shadcn 2>&1)",
+      "Bash(cd /c/Users/Sabaoon/Documents/code/kolda-tech && npx shadcn init -d 2>&1)",
+      "Bash(cd /c/Users/Sabaoon/Documents/code/kolda-tech && npx shadcn add button input progress card badge textarea separator -y 2>&1)",
+      "Bash(cd /c/Users/Sabaoon/Documents/code/kolda-tech && npm run build 2>&1)",
+      "Bash(tail:*)",
+      "Bash(python:*)",
+      "Bash(cd /c/Users/Sabaoon/Documents/code/kolda-tech && node -e \"console.log\\(JSON.parse\\(require\\('fs'\\).readFileSync\\('package.json','utf8'\\)\\).scripts\\)\" 2>&1)",
+      "Bash(cd:*)"
+    ]
+  }
+}
