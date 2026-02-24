@@ -1,19 +1,20 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
-import { Progress } from "@/components/ui/progress";
-import { Separator } from "@/components/ui/separator";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
+import { Separator } from "@/components/ui/separator";
+import { Card, CardContent } from "@/components/ui/card";
+import { User, X } from "lucide-react";
+import { ScreenLayout } from "@/components/onboarding/ScreenLayout";
 import {
-  Briefcase,
-  PenTool,
-  Lightbulb,
-  ArrowRight,
-  User,
-} from "lucide-react";
+  ProfileCompletionCard,
+  PostServiceCard,
+  SuggestedJobsCard,
+  QuickTipsCard,
+} from "@/components/onboarding/DashboardCards";
 
 interface UserProfile {
   name: string;
@@ -23,21 +24,11 @@ interface UserProfile {
   firstAction: "apply" | "post" | "contact" | null;
 }
 
-const suggestedJobs = [
-  { title: "Senior React Developer", company: "TechCorp", type: "Full-time" },
-  { title: "UI/UX Designer", company: "DesignStudio", type: "Contract" },
-  { title: "Full Stack Engineer", company: "StartupXYZ", type: "Remote" },
-];
-
-const tips = [
-  "Complete your skill assessments to rank higher",
-  "Add a profile photo to get 40% more views",
-  "Set your availability status to attract recruiters",
-];
-
 export default function DashboardPage() {
-  const router = useRouter();
   const [profile, setProfile] = useState<UserProfile | null>(null);
+  const [editing, setEditing] = useState(false);
+  const [draft, setDraft] = useState<UserProfile | null>(null);
+  const [skillInput, setSkillInput] = useState("");
 
   useEffect(() => {
     const stored = localStorage.getItem("kolda-user-profile");
@@ -56,127 +47,181 @@ export default function DashboardPage() {
 
   const firstName = profile.name.split(" ")[0] || "there";
 
+  function handleEdit() {
+    setDraft({ ...profile! });
+    setSkillInput("");
+    setEditing(true);
+  }
+
+  function handleSave() {
+    if (!draft) return;
+    localStorage.setItem("kolda-user-profile", JSON.stringify(draft));
+    setProfile(draft);
+    setEditing(false);
+  }
+
+  function handleCancel() {
+    setDraft(null);
+    setEditing(false);
+  }
+
+  function handleAddSkill(e: React.KeyboardEvent<HTMLInputElement>) {
+    if (e.key === "Enter" && skillInput.trim() && draft) {
+      e.preventDefault();
+      if (!draft.skills.includes(skillInput.trim())) {
+        setDraft({ ...draft, skills: [...draft.skills, skillInput.trim()] });
+      }
+      setSkillInput("");
+    }
+  }
+
+  function handleRemoveSkill(skill: string) {
+    if (!draft) return;
+    setDraft({ ...draft, skills: draft.skills.filter((s) => s !== skill) });
+  }
+
   return (
-    <div className="flex min-h-screen flex-col items-center px-4 py-12">
-      <div className="w-full max-w-2xl space-y-8">
-        {/* Greeting Header */}
-        <div>
-          <div className="flex items-center gap-3">
-            <div className="flex h-12 w-12 items-center justify-center rounded-full bg-primary/10">
-              <User className="h-6 w-6 text-primary" />
-            </div>
-            <div>
-              <h1 className="text-2xl font-bold tracking-tight">
-                Welcome back, {firstName}!
-              </h1>
-              <p className="text-sm text-muted-foreground">
-                {profile.profession || "Your dashboard is ready"}
-              </p>
-            </div>
+    <ScreenLayout maxWidth="2xl" centered={false} className="py-12">
+      {/* Greeting Header */}
+      <div>
+        <div className="flex items-center gap-3">
+          <div className="flex h-12 w-12 items-center justify-center rounded-full bg-primary/10">
+            <User className="h-6 w-6 text-primary" />
           </div>
-          {profile.skills.length > 0 && (
-            <div className="mt-4 flex flex-wrap gap-2">
-              {profile.skills.map((skill) => (
-                <Badge key={skill} variant="secondary">
-                  {skill}
-                </Badge>
-              ))}
-            </div>
-          )}
+          <div>
+            <h1 className="text-2xl font-bold tracking-tight">
+              Welcome back, {firstName}!
+            </h1>
+            <p className="text-sm text-muted-foreground">
+              {profile.profession || "Your dashboard is ready"}
+            </p>
+          </div>
         </div>
+        {profile.skills.length > 0 && (
+          <div className="mt-4 flex flex-wrap gap-2">
+            {profile.skills.map((skill) => (
+              <Badge key={skill} variant="secondary">
+                {skill}
+              </Badge>
+            ))}
+          </div>
+        )}
+      </div>
 
-        <Separator />
+      <Separator />
 
-        {/* Cards Grid */}
-        <div className="grid gap-4 sm:grid-cols-2">
-          {/* Profile Completion */}
-          <Card>
-            <CardContent className="p-5">
-              <h3 className="text-sm font-medium text-muted-foreground">
-                Profile Completion
-              </h3>
-              <div className="mt-3 flex items-end gap-2">
-                <span className="text-3xl font-bold">75%</span>
-              </div>
-              <Progress value={75} className="mt-3 h-2" />
-              <p className="mt-2 text-xs text-muted-foreground">
-                Add a photo and skills assessment to reach 100%
-              </p>
-            </CardContent>
-          </Card>
-
-          {/* Post a Service */}
-          <Card className="group cursor-pointer transition-all hover:shadow-md">
-            <CardContent className="flex h-full flex-col items-center justify-center gap-2 p-5 text-center">
-              <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-primary/10">
-                <PenTool className="h-5 w-5 text-primary" />
-              </div>
-              <h3 className="font-semibold">Post a Service</h3>
-              <p className="text-xs text-muted-foreground">
-                Let clients know what you offer
-              </p>
-            </CardContent>
-          </Card>
-        </div>
-
-        {/* Suggested Jobs */}
+      {/* Inline Edit Form */}
+      {editing && draft && (
         <Card>
-          <CardContent className="p-5">
-            <div className="flex items-center gap-2">
-              <Briefcase className="h-4 w-4 text-primary" />
-              <h3 className="font-semibold">Suggested Jobs</h3>
+          <CardContent className="space-y-4 p-5">
+            <h3 className="font-semibold">Edit Profile</h3>
+
+            <div className="space-y-2">
+              <label htmlFor="edit-name" className="text-sm font-medium">
+                Full Name
+              </label>
+              <Input
+                id="edit-name"
+                value={draft.name}
+                onChange={(e) => setDraft({ ...draft, name: e.target.value })}
+              />
             </div>
-            <div className="mt-3 space-y-0">
-              {suggestedJobs.map((job, i) => (
-                <div key={job.title}>
-                  <div className="flex items-center justify-between py-3">
-                    <div>
-                      <p className="text-sm font-medium">{job.title}</p>
-                      <p className="text-xs text-muted-foreground">
-                        {job.company}
-                      </p>
-                    </div>
-                    <span className="rounded-full bg-muted px-2.5 py-0.5 text-xs font-medium">
-                      {job.type}
-                    </span>
-                  </div>
-                  {i < suggestedJobs.length - 1 && <Separator />}
+
+            <div className="space-y-2">
+              <label htmlFor="edit-profession" className="text-sm font-medium">
+                Profession
+              </label>
+              <Input
+                id="edit-profession"
+                value={draft.profession}
+                onChange={(e) =>
+                  setDraft({ ...draft, profession: e.target.value })
+                }
+              />
+            </div>
+
+            <div className="space-y-2">
+              <label htmlFor="edit-skills" className="text-sm font-medium">
+                Skills
+              </label>
+              <Input
+                id="edit-skills"
+                placeholder="Type a skill and press Enter"
+                value={skillInput}
+                onChange={(e) => setSkillInput(e.target.value)}
+                onKeyDown={handleAddSkill}
+              />
+              {draft.skills.length > 0 && (
+                <div className="flex flex-wrap gap-2 pt-1">
+                  {draft.skills.map((skill) => (
+                    <Badge
+                      key={skill}
+                      variant="secondary"
+                      className="gap-1 pr-1"
+                    >
+                      {skill}
+                      <button
+                        type="button"
+                        onClick={() => handleRemoveSkill(skill)}
+                        className="ml-1 rounded-full p-0.5 hover:bg-muted-foreground/20"
+                      >
+                        <X className="h-3 w-3" />
+                      </button>
+                    </Badge>
+                  ))}
                 </div>
-              ))}
+              )}
+            </div>
+
+            <div className="space-y-2">
+              <label htmlFor="edit-experience" className="text-sm font-medium">
+                Experience
+              </label>
+              <Textarea
+                id="edit-experience"
+                rows={4}
+                value={draft.experience}
+                onChange={(e) =>
+                  setDraft({ ...draft, experience: e.target.value })
+                }
+              />
+            </div>
+
+            <div className="flex gap-3 pt-2">
+              <Button className="flex-1" onClick={handleSave}>
+                Save Changes
+              </Button>
+              <Button
+                variant="outline"
+                className="flex-1"
+                onClick={handleCancel}
+              >
+                Cancel
+              </Button>
             </div>
           </CardContent>
         </Card>
+      )}
 
-        {/* Quick Tips */}
-        <Card>
-          <CardContent className="p-5">
-            <div className="flex items-center gap-2">
-              <Lightbulb className="h-4 w-4 text-yellow-500" />
-              <h3 className="font-semibold">Quick Tips</h3>
-            </div>
-            <ul className="mt-3 space-y-2">
-              {tips.map((tip) => (
-                <li
-                  key={tip}
-                  className="flex items-start gap-2 text-sm text-muted-foreground"
-                >
-                  <ArrowRight className="mt-0.5 h-3.5 w-3.5 shrink-0 text-primary" />
-                  {tip}
-                </li>
-              ))}
-            </ul>
-          </CardContent>
-        </Card>
+      {/* Cards Grid */}
+      <div className="grid gap-4 sm:grid-cols-2">
+        <ProfileCompletionCard />
+        <PostServiceCard />
+      </div>
 
+      <SuggestedJobsCard />
+      <QuickTipsCard />
+
+      {!editing && (
         <Button
           size="lg"
           className="w-full"
           variant="outline"
-          onClick={() => router.push("/")}
+          onClick={handleEdit}
         >
           Edit Profile
         </Button>
-      </div>
-    </div>
+      )}
+    </ScreenLayout>
   );
 }
