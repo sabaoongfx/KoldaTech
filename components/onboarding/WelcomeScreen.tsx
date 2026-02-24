@@ -17,7 +17,7 @@ export function WelcomeScreen({ onNext }: WelcomeScreenProps) {
 
       <h1 className="text-4xl font-bold tracking-tight sm:text-5xl">
         Welcome to{" "}
-        <span className="bg-gradient-to-r from-primary to-violet-400 bg-clip-text text-transparent">
+        <span className="bg-[linear-gradient(61.63deg,rgb(45,66,255)_-15.05%,rgb(156,99,250)_104.96%)] bg-clip-text text-transparent">
           KoldaTech
         </span>
       </h1>
